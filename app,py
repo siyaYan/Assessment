@@ -1,16 +1,61 @@
 from flask import Flask
+from flask import render_template
+import pandas as pd
+from flask import request
 
 app = Flask(__name__)
 
-from flask import render_template
 
 @app.route('/')
 def home():
-    # Perform data processing and obtain the analysis results
-    # Pass the processed data to the template
-    return render_template('home.html', data=data)
+    return render_template('home.html')
 
-# Define more routes and views as needed
+@app.route('/data/<choice>')
+def showdata(choice):
+    if request.method == 'POST':
+        set = request.form.get('name')
+        if set == "back":
+            return redirect(url_for('home'))
+        else:
+            return render_template('analyse.html')
+
+    # Data Retrieval
+    url1 = "https://www.cleanenergyregulator.gov.au/DocumentAssets/Documents/National%20Greenhouse%20and%20Energy%20Register%20controlling%20corporations%202021-22.csv"
+    url2 = "https://www.cleanenergyregulator.gov.au/DocumentAssets/Documents/National%20Greenhouse%20and%20Energy%20Register%20RTC%20holders%202021-22.csv"
+    url3 = "https://www.cleanenergyregulator.gov.au/DocumentAssets/Documents/National%20Greenhouse%20and%20Energy%20Register%20corporations%20deregistered%202021-22.csv"
+    url4 = "https://www.cleanenergyregulator.gov.au/DocumentAssets/Documents/National%20Greenhouse%20and%20Energy%20Register%20responsible%20emitters%202021-22.csv"
+
+    df1=pd.read_csv(url1,header=3)
+    df2=pd.read_csv(url2,header=0)
+    df3=pd.read_csv(url3,header=0)
+    df4=pd.read_csv(url4,header=0)
+    
+    title1="National Greenhouse and Energy Register controlling corporations 2021-22"
+    title2="National Greenhouse and Energy Register RTC holders 2021-22"
+    title3="National Greenhouse and Energy Register corporations deregistered 2021-22"
+    title4="National Greenhouse and Energy Register responsible emitters 2021-22"
+
+    # Data Processing
+    # Perform any data processing or analysis tasks here
+
+    # Prepare data for display
+    data1 = df1.to_html()
+    data2 = df2.to_html()
+    data3 = df3.to_html()
+    data4 = df4.to_html()
+
+    # print(data)
+    # Render the template with the processed data
+    if(choice=="set1"):
+        return render_template('showdata.html', head=title1,tables=[data1], titles=[''])
+    elif(choice == "set2"):   
+        return render_template('showdata.html', head=title2,tables=[data2], titles=[''])
+    elif(choice == "set3"):   
+        return render_template('showdata.html', head=title3,tables=[data3], titles=[''])
+    elif(choice == "set4"):   
+        return render_template('showdata.html', head=title4,tables=[data4], titles=[''])
+    else:
+        return render_template('analyse.html')
 
 
 if __name__ == '__main__':
