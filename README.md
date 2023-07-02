@@ -11,6 +11,11 @@ You may need the following environment and APIs before running the web applicati
 How to run the web applicaiton
 
 Running app:
+
 1.Open terminal
+
 2.Cd to the clone repository
+
 3.Input 'Python app.py'
+
+4.Open brower 'http://127.0.0.1:5000'
