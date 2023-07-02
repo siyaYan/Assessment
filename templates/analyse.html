@@ -1,15 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>National Greenhouse and Energy Register Analysis</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>National Greenhouse and Energy Register Analysis</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+  <!-- <script src="{{url_for('static', filename='drawChart.js')}}"></script> -->
+
 </head>
 
-  <body>
-    <h1>National Greenhouse and Energy Register 2021-22 Analyse</h1>
-    <table>
-      <a href="/"><button>Back</button></a>
-  </table>
-  </body>
+<body>
+  <h1>National Greenhouse and Energy Register 2021-22 Analyse</h1>
+
+  <a href="/"><button>Back</button></a>
+  <button id="total">Total</button>
+  <button id="proportion">Proportion</button></a>
+  <button id="trend">Trend</button></a>
+
+  <div>
+    <canvas display='false' id="myChart" width="200" height="100"></canvas>
+    <canvas display='false' id="myChart1" width="200" height="100"></canvas>
+    <canvas display='false' id="myChart2" width="200" height="100"></canvas>
+
+    <script>
+
+      document.getElementById("trend").addEventListener("click", function () {
+        window.scrollBy(0, 1200);
+      });
+
+      document.getElementById("proportion").addEventListener("click", function () {
+        window.scrollBy(0, 600);
+      });
+    </script>
+  </div>
+
+</body>
+
+<script>
+  var data = {{ data | tojson}};
+  const ctx = document.getElementById('myChart').getContext('2d');
+  const myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: data["types"],
+      datasets: [
+        {
+          label: "Count",
+          backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#c45850"],
+          data: data["values"]
+        }
+      ]
+    },
+    options: {
+      legend: { display: false },
+      title: {
+        display: true,
+        text: 'Summary Statistics About National Greenhouse and Energy Register 2021-22'
+      }
+    }
+  });
+
+  const ctx1 = document.getElementById('myChart1').getContext('2d');
+  const myChart1 = new Chart(ctx1,
+    {
+      type: 'pie',
+      data: {
+        labels: data["types"],
+        datasets: [{
+          label: 'Proportion',
+          data: data["props"],
+          backgroundColor: [
+            'rgb(255, 99, 132)',
+            'rgb(54, 162, 235)',
+            'rgb(255, 205, 86)',
+            'rgb(153, 102, 255)'
+          ]
+        }],
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Proportion About National Greenhouse and Energy Register 2021-22'
+            }
+          }
+        }
+      }
+    });
+
+  const ctx2 = document.getElementById('myChart2').getContext('2d');
+  const mychart2 = new Chart(ctx2,
+    {
+      type: 'line',
+      data: {
+        labels: data['types'],
+        datasets: [{
+          data: data['trends']['controlling corporations'],
+          label: "controlling corporations",
+          borderColor: "#3e95cd",
+          fill: false
+        }, {
+          data: data['trends']['RTC holders'],
+          label: "RTC holders",
+          borderColor: "#8e5ea2",
+          fill: false
+        }, {
+          data: data['trends']['corporations deregistered'],
+          label: "corporations deregistered",
+          borderColor: "#3cba9f",
+          fill: false
+        }, {
+          data: data['trends']['responsible emitters'],
+          label: "responsible emitters",
+          borderColor: "#e8c3b9",
+          fill: false
+        }
+        ]
+      },
+      options: {
+        title: {
+          display: true,
+          text: 'Trend About National Greenhouse and Energy Register 2021-22'
+        },
+        hover: {
+          mode: 'index',
+          intersect: true
+        },
+      }
+    })
+</script>
+
 </html>
